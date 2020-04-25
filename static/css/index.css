@@ -1,0 +1,11 @@
+li{
+    list-style: none;
+}
+#main-body{
+    margin: 10px; 
+}
+#second-body{
+    width: 600px;
+    height: 420px;
+    background: url(../images/2K.jpg)
+}

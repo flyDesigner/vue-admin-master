@@ -1,0 +1,196 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="https://openlayers.org/en/v5.2.0/css/ol.css" type="text/css">
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script
+        src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v5.2.0/build/ol.js"></script>
+    <script src="proj4.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        var allOfEquipmentLayer = new ol.layer.Vector({
+            source: new ol.source.Vector()
+        });
+        var map = {};
+        var view = new ol.View({
+            zoom: 13,
+            minZoom: 1,
+            maxZoom: 20,
+            center: [118.82593631346333, 31.871093206049558], //3857地图中心
+            projection: "EPSG:4326", //3857
+        })
+        function createEquipFeature(geom) {
+            let feature = new ol.Feature(new ol.geom.Point(geom));
+            feature.setStyle(
+                new ol.style.Style({
+                    fill: new ol.style.Fill({
+                        color: 'rgba(255, 255, 255, 0.2)'
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: '#ffcc33',
+                        width: 2
+                    }),
+                    image: new ol.style.Circle({
+                        radius: 7,
+                        fill: new ol.style.Fill({
+                            color: 'red'
+                        })
+                    })
+                })
+            )
+            return feature;
+        }
+        const gaodeMapUrl =
+            // 高德地图
+            // "http://webst0{1-4}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}",
+            // "http://webrd0{1-4}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+            // "http://webrd0{1-4}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}",
+            "http://webrd0{1-4}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}";
+        // 谷歌地图
+        // "http://mt1.google.cn/vt?lyrs=m&hl=zh-CN&gl=CN&style=47&x={x}&y={y}&z={z}";
+
+        // 高德、谷歌地图底图
+        var gaodeMapLayer = new ol.layer.Tile({
+            source: new ol.source.XYZ({
+                url: gaodeMapUrl,
+                format: new ol.format.GeoJSON()
+            })
+        });
+        const key = "50a00af72e2c650b0fecfbeee42edd0e";
+
+        // 封装底图函数
+        function getBaseLayer(layername, layer) {
+            return new ol.layer.Tile({
+                title: layername,
+                source: new ol.source.XYZ({
+                    url: "http://t4.tianditu.com/DataServer?T=" + layer + "&x={x}&y={y}&l={z}&tk=" + key
+                })
+            });
+        }
+        //封装标注图层
+        function getAnnoLayer(layername, layer) {
+            return new ol.layer.Tile({
+                title: layername,
+                source: new ol.source.XYZ({
+                    url: "http://t4.tianditu.com/DataServer?T=" + layer + "&x={x}&y={y}&l={z}&tk=" + key
+                })
+            });
+        }
+
+        function js_getDPI() {
+            var arrDPI = new Array;
+            if (window.screen.deviceXDPI) {
+                arrDPI[0] = window.screen.deviceXDPI;
+                arrDPI[1] = window.screen.deviceYDPI;
+            }
+            else {
+                var tmpNode = document.createElement("DIV");
+                tmpNode.style.cssText = "width:1in;height:1in;position:absolute;left:0px;top:0px;z-index:99;visibility:hidden";
+                document.body.appendChild(tmpNode);
+                arrDPI[0] = parseInt(tmpNode.offsetWidth);
+                arrDPI[1] = parseInt(tmpNode.offsetHeight);
+                tmpNode.parentNode.removeChild(tmpNode);
+            }
+            return arrDPI;
+        }
+
+
+        allOfEquipmentLayer.getSource().addFeature(createEquipFeature([118.82593631346333, 31.871093206049558]));
+        // 天地图底图
+        var tileLayer = getBaseLayer("天地图路网", "vec_w");
+        //标注图层
+        var tileMark = getAnnoLayer("地图标注", "cva_w");
+        var imgLayer = getBaseLayer("天地图影像地图", "img_w");
+        var terLayer = getBaseLayer("天地图地形地图", "ter_w");
+
+        window.onload = function () {
+            map = new ol.Map({
+                target: 'map',
+                layers: [
+                    // gaodeMapLayer,
+                    tileLayer,
+                    tileMark,
+                    allOfEquipmentLayer
+                ],
+                view: view
+            });
+
+
+            map.getView().on('change', function () {
+                var coordCenter = map.getView().getCenter();
+                console.log(coordCenter);
+
+                var coord1 = ol.proj.transform(coordCenter, 'EPSG:3857', 'EPSG:4326');
+                console.log(coord1);
+                //		
+            });
+            var typeSelect = document.getElementById('type');
+            typeSelect.onchange = function () {
+                if (typeSelect.value == '0') {
+                    map.removeLayer(tileLayer);
+                    map.removeLayer(tileMark);
+                    map.removeLayer(allOfEquipmentLayer);
+                    map.addLayer(gaodeMapLayer)
+                    map.addLayer(allOfEquipmentLayer);
+                } else {
+                    map.removeLayer(gaodeMapLayer)
+                    map.removeLayer(allOfEquipmentLayer);
+                    map.addLayer(tileLayer);
+                    map.addLayer(tileMark);
+                    map.addLayer(allOfEquipmentLayer);
+                }
+            };
+
+        }
+
+
+        function ssssss() {
+            var firstNum = document.getElementById('firstNum').value;
+            var secondNum = document.getElementById('secondNum').value;
+            console.log(parseFloat(firstNum), parseFloat(secondNum));
+            view.setCenter([firstNum, secondNum]);
+            allOfEquipmentLayer.getSource().clear();
+            let feature = createEquipFeature([firstNum, secondNum]);
+            allOfEquipmentLayer.getSource().addFeature(feature);
+        }
+    </script>
+    <style>
+        .on-map-left {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 11;
+            background-color: #ffffff;
+            border-radius: 3px;
+            opacity: 0.9;
+        }
+
+        .on-map-right {
+            position: absolute;
+            top: 15px;
+            z-index: 11;
+            background-color: #ffffff;
+            border-radius: 3px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+        <div id="map" ></div>
+        <div class="on-map-left">
+            <select id="type">
+                <option value="1">天地图</option>
+                <option value="0">高德地图</option>
+
+            </select>
+        </div>
+        <div class="on-map-right" style="right:calc(1% + 20px);">
+            经度：<input type="text" id="firstNum">
+            纬度：<input type="text" id="secondNum">
+            <input type="button" value="sure" id="sureClick" onclick="ssssss()">
+        </div>
+</body>
+<html>

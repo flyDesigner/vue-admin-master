@@ -1,0 +1,10 @@
+npm-debug.log
+node_modules
+.project
+.vscode
+.history
+.DS_Store
+\.settings/
+/dist
+src/config/env.js
+src/views/gas2/sts/iframe/component/Query.vue

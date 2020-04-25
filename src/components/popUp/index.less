@@ -1,0 +1,84 @@
+.core-modal-mask {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    z-index: 1011;
+    background-color: rgba(33, 33, 33, 0.2);
+  }
+  .core-modal-content-drag {
+    cursor: move;
+  }
+  .core-modal-wrap {
+    position: fixed;
+    overflow: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1011;
+    -webkit-overflow-scrolling: touch;
+    outline: 0;
+    .core-modal {
+      min-height: 50px;
+      margin: 0 auto;
+      position: relative;
+      transition: transform .8s cubic-bezier(.36, .66, .04, 1);
+      &>div {
+        background-color: #fff;
+      }
+      .core-modal-header {
+        border-bottom: 1px solid #f5f5f5;
+        padding: 10px 16px;
+        line-height: 1;
+        border-radius: 5px 5px 0 0;
+        // background-color: #ffb403;
+        background: linear-gradient(to right,#186bc9,#3392e2);
+        color: #fff;
+      }
+      .core-modal-footer {
+        border-top: 1px solid #f5f5f5;
+        padding: 10px;
+        text-align: right;
+        box-shadow: 0 6px 16px 0px rgba(35, 35, 35, 0.2);
+        border-radius: 0 0 5px 5px;
+        &>button:not(:last-child){
+          margin-right: 10px;
+        }
+      }
+      .core-modal-footer-align {
+        text-align: center !important;
+      }
+      .core-modal-body {
+        padding: 10px;
+        overflow: auto;
+      }
+      .ivu-select-selection{
+        height: auto;
+      }
+    }
+  }
+  #context-box .ivu-modal-close .ivu-icon-ios-close-empty{
+    color: #fff;
+    line-height: 24px;
+  }
+  #context-box .ivu-modal-close .ivu-icon-ios-close-empty:hover {
+    color: #fff;
+  }
+  .sidelip-down-modal-enter-active {
+    transform: translate3d(0, 0, 0);
+  }
+  
+  .sidelip-down-modal-enter {
+    transform: translate3d(0, calc(-100% - 75px), 0);
+  }
+  
+  .sidelip-down-modal-leave {
+    transform: translate3d(0, 0, 0);
+  }
+  
+  .sidelip-down-modal-leave-active {
+    transform: translate3d(0, calc(-100% - 75px), 0);
+  }

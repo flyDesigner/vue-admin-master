@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title>天地图矢量(球面墨卡托) - 4.x</title>
+ 
+    <link rel="stylesheet" href="https://js.arcgis.com/4.12/esri/themes/light/main.css"/>
+    <script src="https://js.arcgis.com/4.12/"></script>
+ 
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+ 
+    <script>
+        require([
+            "esri/layers/WebTileLayer",
+            "esri/Map",
+            "esri/layers/TileLayer",
+            "esri/views/MapView"
+        ], function (WebTileLayer, Map,TileLayer, MapView) {
+            var tiandituBaseUrl = "http://{subDomain}.tianditu.gov.cn"; //天地图服务地址
+            var token = "174705aebfe31b79b3587279e211cb9a"; //天地图token
+ 
+            var map = new Map({
+                ground: "world-elevation"
+            });
+ 
+            var view = new MapView({
+                container: "viewDiv",
+                map: map,
+                scale: 123456789,
+                //center: [-65, -15]
+                //center: [119,32]
+            });
+ 
+            //矢量地图(球面墨卡托投影)
+            var tiledLayer = new WebTileLayer({
+                urlTemplate:
+                tiandituBaseUrl + "/vec_w/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER=vec&STYLE=default&FORMAT=tiles&TILEMATRIXSET=w&TILEMATRIX={level}&TILEROW={row}&TILECOL={col}&tk=" + token,
+                subDomains:
+                    ["t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7"]
+            });
+ 
+            //矢量注记(球面墨卡托投影)
+            var tiledLayerAnno = new WebTileLayer({
+                urlTemplate:
+                tiandituBaseUrl + "/cva_w/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER=cva&STYLE=default&FORMAT=tiles&TILEMATRIXSET=w&TILEMATRIX={level}&TILEROW={row}&TILECOL={col}&tk=" + token,
+                subDomains:
+                    ["t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7"]
+            });
+
+            
+            var layer = new TileLayer('http://10.122.3.41:6080/arcgis/rest/services/zjgw3857t/MapServer',{
+            id: 'jp_gw'
+          });
+            
+            map.add(tiledLayer);
+            
+            
+            map.add(tiledLayerAnno);
+            map.add(layer);
+        });
+    </script>
+</head>
+ 
+<body>
+<div id="viewDiv"></div>
+</body>
+
+</html>
